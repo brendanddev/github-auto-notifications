@@ -1,4 +1,7 @@
 
+# Environment variables
+.env
+
 # Maven build output
 target/
 !.mvn/wrapper/maven-wrapper.jar
