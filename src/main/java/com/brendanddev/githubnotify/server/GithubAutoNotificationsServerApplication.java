@@ -1,4 +1,4 @@
-package com.brendanddev.githubnotify;
+package com.brendanddev.githubnotify.server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
