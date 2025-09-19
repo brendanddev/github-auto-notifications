@@ -1,4 +1,4 @@
-package com.brendanddev.githubnotify;
+package com.brendanddev.githubnotify.client;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -10,35 +10,38 @@ import java.io.FileInputStream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 
 public class Client {
 
-    private String uri = "https://api.github.com/user";
-    private ObjectMapper mapper = new ObjectMapper();
-
-    String key;
+    private static final String BASE_URL = "https://api.github.com";
+    private final HttpClient client;
+    private final ObjectMapper mapper;
+    private final String key;
 
 
     public Client() {
+        client = HttpClient.newHttpClient();
+        mapper = new ObjectMapper();
+        String tempKey = null;
+
         try {
             Properties props = new Properties();
             props.load(new FileInputStream(".env"));
-            key = props.getProperty("GITHUB_TOKEN");
+            tempKey = props.getProperty("GITHUB_TOKEN");
         } catch (Exception e) {
             e.printStackTrace();
         }
+        key = tempKey;
     }
 
 
 
-
-    public void sendGET(String uri) throws Exception {
-        System.out.println(key);
-        HttpClient client = HttpClient.newHttpClient();
+    public void sendGET(String endpoint) throws Exception {
+        if (key == null || key.isEmpty()) return;
+        String fullUrl = BASE_URL + endpoint;
 
         HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(uri))
+            .uri(URI.create(fullUrl))
             .header("Accept", "application/json")
             .header("Authorization", "token " + key)
             .build();
@@ -47,8 +50,7 @@ public class Client {
             client.send(request, BodyHandlers.ofString());
 
         JsonNode jsonNode = mapper.readTree(response.body());
-        ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
-        String prettyJson = writer.writeValueAsString(jsonNode);
+        String prettyJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode);
         System.out.println(prettyJson);
     }
 
