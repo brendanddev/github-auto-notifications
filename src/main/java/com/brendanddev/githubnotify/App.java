@@ -9,7 +9,7 @@ public class App {
         Client client = new Client();
 
         try {
-            client.sendGET("https://api.github.com");
+            client.sendGET("https://api.github.com/user");
         } catch (Exception e) {
             System.out.println("Error occurred!");
         }
